@@ -1,0 +1,1163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Bestune T90 Finance Calculator</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap"
+    rel="stylesheet"
+  />
+  <style>
+    :root {
+      --bg: #f3f4f6;
+      --surface: #ffffff;
+      --accent: #e5252a;
+      --accent-soft: rgba(229, 37, 42, 0.08);
+      --text-main: #111827;
+      --text-muted: #6b7280;
+      --border-subtle: #e5e7eb;
+      --shadow-soft: 0 24px 60px rgba(15, 23, 42, 0.12);
+      --radius-lg: 24px;
+      --radius-xl: 32px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
+        "Segoe UI", sans-serif;
+      background: radial-gradient(circle at top left, #ffffff 0, #e5e7eb 55%, #d1d5db 100%);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: stretch;
+      padding: 32px 16px;
+    }
+
+    .page-wrapper {
+      max-width: 1200px;
+      width: 100%;
+      background: linear-gradient(135deg, #f9fafb 0, #ffffff 45%, #f3f4f6 100%);
+      border-radius: 32px;
+      box-shadow: var(--shadow-soft);
+      padding: 24px 28px 28px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .brand-strip {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 4px 4px 16px;
+      gap: 8px;
+    }
+
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 14px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-weight: 600;
+      color: #111827;
+    }
+
+    .brand-logo-mark {
+      width: 32px;
+      height: 32px;
+      border-radius: 12px;
+      border: 2px solid #111827;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .brand-strip .cta-ghost {
+      border-radius: 999px;
+      padding: 8px 16px;
+      border: 1px solid var(--border-subtle);
+      background: rgba(255, 255, 255, 0.7);
+      backdrop-filter: blur(8px);
+      font-size: 12px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #111827;
+    }
+
+    .cta-ghost span.icon {
+      font-size: 15px;
+    }
+
+    .layout {
+      display: grid;
+      grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+      gap: 24px;
+      align-items: stretch;
+    }
+
+    /* Model Tabs */
+    .model-tabs {
+      display: inline-flex;
+      gap: 10px;
+      background: rgba(255, 255, 255, 0.7);
+      padding: 4px;
+      border-radius: 999px;
+      box-shadow: 0 10px 35px rgba(15, 23, 42, 0.15);
+      margin-bottom: 18px;
+    }
+
+    .model-tab {
+      border-radius: 999px;
+      padding: 9px 20px;
+      font-size: 13px;
+      font-weight: 500;
+      border: none;
+      background: transparent;
+      color: var(--text-muted);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: 0.2s ease;
+    }
+
+    .model-tab span.icon {
+      font-size: 14px;
+    }
+
+    .model-tab.active {
+      background: var(--accent);
+      color: #ffffff;
+      box-shadow: 0 10px 35px rgba(229, 37, 42, 0.6);
+      transform: translateY(-1px);
+    }
+
+    .model-tab:not(.active):hover {
+      background: rgba(15, 23, 42, 0.05);
+      color: #111827;
+    }
+
+    /* Car card / hero */
+    .hero-card {
+      background: #111827;
+      border-radius: var(--radius-xl);
+      overflow: hidden;
+      position: relative;
+      color: #ffffff;
+      min-height: 360px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .hero-image {
+      position: relative;
+      flex: 1;
+      background-image: url("https://images.pexels.com/photos/112460/pexels-photo-112460.jpeg?auto=compress&cs=tinysrgb&w=1200");
+      background-size: cover;
+      background-position: center;
+    }
+
+    .hero-gradient {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        135deg,
+        rgba(15, 23, 42, 0.9) 0,
+        rgba(15, 23, 42, 0.3) 40%,
+        rgba(15, 23, 42, 0.2) 100%
+      );
+    }
+
+    .hero-overlay {
+      position: absolute;
+      inset: 18px 18px 22px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .badge-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+    }
+
+    .model-badge {
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .model-badge span.tag {
+      padding: 3px 8px;
+      border-radius: 999px;
+      background: rgba(243, 244, 246, 0.18);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-weight: 500;
+    }
+
+    .model-chip {
+      padding: 6px 12px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.7);
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.18em;
+    }
+
+    .feature-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      max-width: 80%;
+    }
+
+    .feature-pill {
+      padding: 7px 12px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.9);
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+    }
+
+    .feature-pill .icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 999px;
+      background: rgba(248, 250, 252, 0.1);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+
+    .hero-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      color: rgba(209, 213, 219, 0.9);
+    }
+
+    .hero-footer .price-label {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      opacity: 0.8;
+    }
+
+    .hero-footer .price-value {
+      font-size: 18px;
+      font-weight: 600;
+    }
+
+    .hero-footer .pill-ghost {
+      border-radius: 999px;
+      padding: 6px 12px;
+      border: 1px solid rgba(148, 163, 184, 0.7);
+      background: rgba(15, 23, 42, 0.7);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+    }
+
+    .hero-footer .pill-ghost span.icon {
+      font-size: 14px;
+    }
+
+    /* Calculator card */
+    .calc-card {
+      border-radius: var(--radius-xl);
+      background: rgba(255, 255, 255, 0.9);
+      box-shadow: 0 18px 45px rgba(15, 23, 42, 0.18);
+      padding: 22px 22px 20px;
+      backdrop-filter: blur(16px);
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .calc-card::before {
+      content: "";
+      position: absolute;
+      inset: -40px;
+      background: radial-gradient(
+        circle at top right,
+        rgba(229, 37, 42, 0.1),
+        transparent 60%
+      );
+      pointer-events: none;
+    }
+
+    .calc-header {
+      position: relative;
+      z-index: 1;
+      margin-bottom: 8px;
+    }
+
+    .calc-title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 6px;
+    }
+
+    .calc-title {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+
+    .calc-subtitle {
+      font-size: 12px;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .calc-badge {
+      font-size: 10px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      color: var(--accent);
+      background: rgba(229, 37, 42, 0.07);
+      padding: 4px 8px;
+      border-radius: 999px;
+      font-weight: 600;
+    }
+
+    .inputs {
+      position: relative;
+      z-index: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      margin-top: 2px;
+    }
+
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .input-label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 8px;
+    }
+
+    .input-label {
+      font-size: 13px;
+      font-weight: 600;
+      color: #111827;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .input-label .icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 999px;
+      background: rgba(15, 23, 42, 0.06);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+    }
+
+    .input-hint {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .input-main-row {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .text-input {
+      flex: 1;
+      min-width: 0;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      padding: 9px 12px;
+      font-size: 13px;
+      outline: none;
+      background: rgba(255, 255, 255, 0.9);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .text-input input {
+      border: none;
+      outline: none;
+      background: transparent;
+      width: 100%;
+      font: inherit;
+      color: inherit;
+      text-align: right;
+    }
+
+    .text-input span.prefix {
+      color: var(--text-muted);
+      font-size: 12px;
+    }
+
+    .pill-input {
+      min-width: 84px;
+      border-radius: 999px;
+      border: 1px solid var(--border-subtle);
+      padding: 7px 10px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      background: rgba(249, 250, 251, 0.9);
+      color: #111827;
+    }
+
+    .pill-input input {
+      border: none;
+      outline: none;
+      background: transparent;
+      width: 46px;
+      font-size: 12px;
+      font-weight: 500;
+      text-align: right;
+    }
+
+    .pill-input span.suffix {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .slider-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      margin-top: 2px;
+    }
+
+    .slider-row .slider-value-text {
+      font-size: 11px;
+      color: var(--text-muted);
+    }
+
+    .slider-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .slider-wrapper span.label {
+      font-size: 11px;
+      color: var(--text-muted);
+      width: 40px;
+    }
+
+    .slider-wrapper span.label.right {
+      text-align: right;
+    }
+
+    input[type="range"] {
+      -webkit-appearance: none;
+      width: 100%;
+      height: 6px;
+      border-radius: 999px;
+      background: #e5e7eb;
+      outline: none;
+      cursor: pointer;
+      position: relative;
+    }
+
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 2px solid var(--accent);
+      box-shadow: 0 0 0 4px rgba(229, 37, 42, 0.25);
+      margin-top: -6px;
+    }
+
+    input[type="range"]::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #ffffff;
+      border: 2px solid var(--accent);
+      box-shadow: 0 0 0 4px rgba(229, 37, 42, 0.25);
+    }
+
+    input[type="range"]::-webkit-slider-runnable-track {
+      height: 6px;
+      border-radius: 999px;
+      background: linear-gradient(
+        to right,
+        var(--accent) var(--value, 0%),
+        #e5e7eb var(--value, 0%)
+      );
+    }
+
+    input[type="range"]::-moz-range-track {
+      height: 6px;
+      border-radius: 999px;
+      background: linear-gradient(
+        to right,
+        var(--accent) var(--value, 0%),
+        #e5e7eb var(--value, 0%)
+      );
+    }
+
+    .tenure-scale {
+      display: flex;
+      justify-content: space-between;
+      font-size: 10px;
+      color: #9ca3af;
+      margin-top: 2px;
+    }
+
+    .calc-button {
+      margin-top: 10px;
+      border: none;
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-size: 14px;
+      font-weight: 600;
+      color: #ffffff;
+      background: linear-gradient(135deg, var(--accent) 0, #b31217 100%);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 16px 40px rgba(229, 37, 42, 0.55);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .calc-button span.chevron {
+      transition: transform 0.18s ease;
+      font-size: 16px;
+    }
+
+    .calc-button:hover span.chevron {
+      transform: translateX(4px);
+    }
+
+    .calc-button-sub {
+      font-size: 11px;
+      font-weight: 400;
+      opacity: 0.88;
+    }
+
+    .result-card {
+      margin-top: 12px;
+      border-radius: 18px;
+      background: #f9fafb;
+      padding: 12px 14px 10px;
+      border: 1px solid rgba(209, 213, 219, 0.8);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .result-header {
+      font-size: 11px;
+      text-transform: uppercase;
+      letter-spacing: 0.16em;
+      font-weight: 600;
+      color: #6b7280;
+      margin-bottom: 4px;
+    }
+
+    .result-main {
+      display: flex;
+      justify-content: space-between;
+      align-items: baseline;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .result-amount {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+    }
+
+    .result-amount span.unit {
+      font-size: 12px;
+      font-weight: 500;
+      color: #6b7280;
+      margin-left: 4px;
+    }
+
+    .result-summary {
+      font-size: 11px;
+      color: #6b7280;
+    }
+
+    .result-footer {
+      margin-top: 6px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: 11px;
+      color: #4b5563;
+    }
+
+    .result-tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .result-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 999px;
+      background: #10b981;
+    }
+
+    @media (max-width: 900px) {
+      body {
+        padding: 16px;
+      }
+
+      .page-wrapper {
+        padding: 18px 16px 20px;
+        border-radius: 24px;
+      }
+
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-card {
+        min-height: 260px;
+      }
+    }
+
+    @media (max-width: 600px) {
+      .brand-strip {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 4px;
+      }
+
+      .calc-title {
+        font-size: 20px;
+      }
+
+      .result-main {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page-wrapper">
+    <div class="brand-strip">
+      <div class="brand-logo">
+        <div class="brand-logo-mark">B</div>
+        <div>
+          <div style="font-size: 11px; opacity: 0.7;">BESTUNE</div>
+          <div style="font-size: 10px; text-transform: uppercase; letter-spacing: 0.16em; opacity: 0.6;">
+            Drive Your Senses
+          </div>
+        </div>
+      </div>
+      <button class="cta-ghost">
+        <span class="icon">📞</span>
+        800 800 800
+      </button>
+    </div>
+
+    <div class="layout">
+      <!-- LEFT: HERO -->
+      <div>
+        <div class="model-tabs">
+          <button class="model-tab active" data-model="LIMOUSINE">
+            <span class="icon">🚘</span> LIMOUSINE
+          </button>
+          <button class="model-tab" data-model="PREMIUM">
+            <span class="icon">⭐</span> PREMIUM
+          </button>
+          <button class="model-tab" data-model="FLAGO">
+            <span class="icon">☰</span> FLAGO
+          </button>
+        </div>
+
+        <div class="hero-card">
+          <div class="hero-image">
+            <div class="hero-gradient"></div>
+            <div class="hero-overlay">
+              <div class="badge-row">
+                <div class="model-badge">
+                  <span id="heroModelName">T90 LIMOUSINE</span>
+                  <span class="tag" id="heroModelTag">SUV</span>
+                </div>
+                <div class="model-chip" id="heroSeriesChip">
+                  T90 SERIES
+                </div>
+              </div>
+
+              <div class="feature-list" id="heroFeatures">
+                <div class="feature-pill">
+                  <div class="icon">⚙️</div>
+                  2.0T Turbo Engine
+                </div>
+                <div class="feature-pill">
+                  <div class="icon">🌅</div>
+                  Panoramic Sunroof
+                </div>
+                <div class="feature-pill">
+                  <div class="icon">🛡️</div>
+                  Advanced Safety Suite
+                </div>
+              </div>
+
+              <div class="hero-footer">
+                <div>
+                  <div class="price-label">Starting from</div>
+                  <div class="price-value" id="heroBasePrice">AED 79,500</div>
+                </div>
+                <button class="pill-ghost">
+                  <span class="icon">🚗</span>
+                  Book a Test Drive
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: CALCULATOR -->
+      <div class="calc-card">
+        <div class="calc-header">
+          <div class="calc-title-row">
+            <div>
+              <div class="calc-title">Finance Your T90</div>
+              <div class="calc-subtitle" id="calcSubtitle">
+                Customize your plan in seconds
+              </div>
+            </div>
+            <div class="calc-badge">Real-time estimation</div>
+          </div>
+        </div>
+
+        <div class="inputs">
+          <!-- Car Price -->
+          <div class="input-group">
+            <div class="input-label-row">
+              <div class="input-label">
+                <div class="icon">🚘</div>
+                Car Price (AED)
+              </div>
+            </div>
+            <div class="input-main-row">
+              <div class="text-input">
+                <span class="prefix">AED</span>
+                <input type="number" id="carPrice" value="79500" min="0" />
+              </div>
+            </div>
+            <div class="input-hint">
+              Includes VAT & basic registration (approximate).
+            </div>
+          </div>
+
+          <!-- Down Payment -->
+          <div class="input-group">
+            <div class="input-label-row">
+              <div class="input-label">
+                <div class="icon">💳</div>
+                Down Payment
+              </div>
+              <div class="input-hint">
+                <span id="downPaymentPercentLabel">20%</span> of car price
+              </div>
+            </div>
+            <div class="input-main-row">
+              <div class="slider-row" style="flex: 1;">
+                <div class="slider-wrapper">
+                  <span class="label">0%</span>
+                  <input
+                    type="range"
+                    id="downPaymentPercent"
+                    min="0"
+                    max="50"
+                    value="20"
+                  />
+                  <span class="label right">50%</span>
+                </div>
+                <div class="slider-value-text" id="downPaymentText">
+                  You pay AED 15,900 upfront.
+                </div>
+              </div>
+              <div class="pill-input">
+                <input
+                  type="number"
+                  id="downPaymentPercentInput"
+                  value="20"
+                  min="0"
+                  max="50"
+                />
+                <span class="suffix">%</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Loan Tenure -->
+          <div class="input-group">
+            <div class="input-label-row">
+              <div class="input-label">
+                <div class="icon">⏱️</div>
+                Loan Tenure
+              </div>
+              <div class="input-hint">
+                <span id="tenureMonthsLabel">60</span> months
+              </div>
+            </div>
+            <div class="slider-row">
+              <div class="slider-wrapper">
+                <span class="label">12</span>
+                <input
+                  type="range"
+                  id="loanTenure"
+                  min="12"
+                  max="84"
+                  step="6"
+                  value="60"
+                />
+                <span class="label right">84</span>
+              </div>
+              <div class="tenure-scale">
+                <span>12</span>
+                <span>24</span>
+                <span>36</span>
+                <span>48</span>
+                <span>60</span>
+                <span>72</span>
+                <span>84</span>
+              </div>
+              <div class="slider-value-text">
+                Longer tenure → lower EMI but more interest.
+              </div>
+            </div>
+          </div>
+
+          <!-- Interest Rate -->
+          <div class="input-group">
+            <div class="input-label-row">
+              <div class="input-label">
+                <div class="icon">📈</div>
+                Interest Rate (per annum)
+              </div>
+            </div>
+            <div class="input-main-row">
+              <div class="pill-input">
+                <input
+                  type="number"
+                  id="interestRate"
+                  value="3.25"
+                  step="0.01"
+                  min="0"
+                />
+                <span class="suffix">% p.a.</span>
+              </div>
+              <div class="input-hint">
+                For illustration only. Actual rate may vary.
+              </div>
+            </div>
+          </div>
+
+          <!-- Loan Amount (computed) -->
+          <div class="input-group">
+            <div class="input-label-row">
+              <div class="input-label">
+                <div class="icon">💰</div>
+                Loan Amount (approx.)
+              </div>
+            </div>
+            <div class="text-input" style="background: #f9fafb;">
+              <span class="prefix">AED</span>
+              <input
+                type="text"
+                id="loanAmount"
+                value="63600"
+                readonly
+                style="font-weight: 600;"
+              />
+            </div>
+          </div>
+        </div>
+
+        <button class="calc-button" id="calculateBtn">
+          <div>
+            Calculate EMI
+            <div class="calc-button-sub">
+              Instantly see your monthly payment
+            </div>
+          </div>
+          <span class="chevron">➜</span>
+        </button>
+
+        <div class="result-card" id="resultCard">
+          <div class="result-header">Your Estimated EMI</div>
+          <div class="result-main">
+            <div class="result-amount" id="emiAmount">
+              AED 1,246 <span class="unit">/ month</span>
+            </div>
+            <div class="result-summary" id="emiSummary">
+              For 60 months at 3.25% interest.
+            </div>
+          </div>
+          <div class="result-footer">
+            <div class="result-tag">
+              <span class="result-dot"></span>
+              No hidden charges
+            </div>
+            <div class="result-tag">
+              <span class="result-dot" style="background:#f59e0b;"></span>
+              Early settlement available
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const carPriceInput = document.getElementById("carPrice");
+    const downRange = document.getElementById("downPaymentPercent");
+    const downInput = document.getElementById("downPaymentPercentInput");
+    const downLabel = document.getElementById("downPaymentPercentLabel");
+    const downText = document.getElementById("downPaymentText");
+    const tenureRange = document.getElementById("loanTenure");
+    const tenureLabel = document.getElementById("tenureMonthsLabel");
+    const interestInput = document.getElementById("interestRate");
+    const loanAmountInput = document.getElementById("loanAmount");
+    const heroBasePrice = document.getElementById("heroBasePrice");
+    const heroModelName = document.getElementById("heroModelName");
+    const heroModelTag = document.getElementById("heroModelTag");
+    const heroFeatures = document.getElementById("heroFeatures");
+    const calcSubtitle = document.getElementById("calcSubtitle");
+    const calculateBtn = document.getElementById("calculateBtn");
+    const emiAmount = document.getElementById("emiAmount");
+    const emiSummary = document.getElementById("emiSummary");
+    const modelTabs = document.querySelectorAll(".model-tab");
+
+    // Model config using your numbers
+    const MODELS = {
+      LIMOUSINE: {
+        label: "T90 LIMOUSINE",
+        price: 79500,
+        tenure: 60,
+        downPercent: 20,
+        tagline: "Customize your plan in seconds",
+        features: [
+          { icon: "⚙️", text: "2.0T Turbo Engine" },
+          { icon: "🌅", text: "Panoramic Sunroof" },
+          { icon: "🛡️", text: "Advanced Safety Suite" },
+        ],
+      },
+      PREMIUM: {
+        label: "T90 PREMIUM",
+        price: 85000,
+        tenure: 60,
+        downPercent: 20,
+        tagline: "Premium trim with flexible finance options",
+        features: [
+          { icon: "💺", text: "Leather Interior" },
+          { icon: "🔊", text: "Premium Audio System" },
+          { icon: "🛡️", text: "Advanced Safety Suite" },
+        ],
+      },
+      FLAGO: {
+        label: "T90 FLAGO",
+        price: 105000,
+        tenure: 60,
+        downPercent: 20,
+        tagline: "This is FLAGO – flagship performance",
+        features: [
+          { icon: "🏁", text: "Flagship Performance" },
+          { icon: "🚀", text: "Sport Tuned Package" },
+          { icon: "🌌", text: "Signature Ambient Lighting" },
+        ],
+      },
+    };
+
+    function formatNumber(num) {
+      return num.toLocaleString("en-AE", {
+        maximumFractionDigits: 0,
+      });
+    }
+
+    function updateLoanDetails() {
+      const price = Number(carPriceInput.value) || 0;
+      const downPercent = Number(downRange.value) || 0;
+      const tenureMonths = Number(tenureRange.value) || 0;
+
+      // Sync fields
+      downInput.value = downPercent;
+      downLabel.textContent = `${downPercent}%`;
+      tenureLabel.textContent = tenureMonths;
+
+      const downPayment = (price * downPercent) / 100;
+      const loanAmount = price - downPayment;
+
+      heroBasePrice.textContent = `AED ${formatNumber(price)}`;
+      downText.textContent = `You pay AED ${formatNumber(
+        Math.round(downPayment)
+      )} upfront.`;
+      loanAmountInput.value = formatNumber(Math.max(loanAmount, 0));
+
+      return { price, downPayment, loanAmount, tenureMonths };
+    }
+
+    function calculateEMI() {
+      const { loanAmount, tenureMonths } = updateLoanDetails();
+      const annualRate = Number(interestInput.value) || 0;
+      const monthlyRate = annualRate / 12 / 100;
+
+      let emi = 0;
+
+      if (monthlyRate === 0) {
+        emi = tenureMonths > 0 ? loanAmount / tenureMonths : 0;
+      } else {
+        const r = monthlyRate;
+        const n = tenureMonths;
+        const factor = Math.pow(1 + r, n);
+        emi = (loanAmount * r * factor) / (factor - 1);
+      }
+
+      emi = isFinite(emi) ? Math.round(emi) : 0;
+
+      emiAmount.innerHTML = `AED ${formatNumber(
+        emi
+      )} <span class="unit">/ month</span>`;
+      emiSummary.textContent = `For ${tenureMonths} months at ${annualRate.toFixed(
+        2
+      )}% interest.`;
+    }
+
+    // Slider gradient helper
+    function updateSliderGradient(slider) {
+      const min = slider.min ? Number(slider.min) : 0;
+      const max = slider.max ? Number(slider.max) : 100;
+      const value = slider.value ? Number(slider.value) : 0;
+      const percent = ((value - min) * 100) / (max - min);
+      slider.style.setProperty("--value", `${percent}%`);
+    }
+
+    // Switch model
+    function setModel(modelKey) {
+      const model = MODELS[modelKey];
+      if (!model) return;
+
+      // Update hero text & features
+      heroModelName.textContent = model.label;
+      calcSubtitle.textContent = model.tagline;
+
+      // Features
+      heroFeatures.innerHTML = "";
+      model.features.forEach((f) => {
+        const pill = document.createElement("div");
+        pill.className = "feature-pill";
+        pill.innerHTML = `<div class="icon">${f.icon}</div>${f.text}`;
+        heroFeatures.appendChild(pill);
+      });
+
+      // Update form fields
+      carPriceInput.value = model.price;
+      downRange.value = model.downPercent;
+      downInput.value = model.downPercent;
+      tenureRange.value = model.tenure;
+
+      updateSliderGradient(downRange);
+      updateSliderGradient(tenureRange);
+
+      calculateEMI();
+    }
+
+    // Event bindings
+    [carPriceInput, interestInput].forEach((el) => {
+      el.addEventListener("input", () => {
+        updateLoanDetails();
+      });
+    });
+
+    downRange.addEventListener("input", () => {
+      updateLoanDetails();
+      updateSliderGradient(downRange);
+    });
+
+    downInput.addEventListener("input", () => {
+      let v = Number(downInput.value) || 0;
+      if (v < 0) v = 0;
+      if (v > 50) v = 50;
+      downInput.value = v;
+      downRange.value = v;
+      updateLoanDetails();
+      updateSliderGradient(downRange);
+    });
+
+    tenureRange.addEventListener("input", () => {
+      updateLoanDetails();
+      updateSliderGradient(tenureRange);
+    });
+
+    calculateBtn.addEventListener("click", (e) => {
+      e.preventDefault();
+      calculateEMI();
+    });
+
+    modelTabs.forEach((tab) => {
+      tab.addEventListener("click", () => {
+        modelTabs.forEach((t) => t.classList.remove("active"));
+        tab.classList.add("active");
+        const modelKey = tab.getAttribute("data-model");
+        setModel(modelKey);
+      });
+    });
+
+    // Initial state
+    updateLoanDetails();
+    updateSliderGradient(downRange);
+    updateSliderGradient(tenureRange);
+    calculateEMI();
+  </script>
+</body>
+</html>
